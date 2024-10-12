@@ -1,0 +1,8 @@
+@import url(../../styles/global.scss);
+
+.container {
+  border-width: 1px;
+  border-radius: calc(var(--radius) - 2px);
+  border-color: var(--border);
+  border-style: solid;
+}
