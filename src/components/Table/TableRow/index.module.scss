@@ -1,4 +1,6 @@
 .container {
-   display: flex;
-   flex-direction: row;
+   display: table-row;
+   border-bottom-width: 1px;
+   border-color: var(--border);
+   border-style: solid;
 }

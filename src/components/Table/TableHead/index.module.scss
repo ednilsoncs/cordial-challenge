@@ -1,6 +1,11 @@
 @import url(../../../styles/global.scss);
 
 .container {
+  display: table-cell;
   color: var(--muted-foreground);
   font-weight: 500;
+  padding: 0px 1rem;
+  height: 3rem;
+  text-align: left;
+  vertical-align: middle;
 }
