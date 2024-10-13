@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styles from './index.module.scss';
+import type { ButtonProps } from './index.types';
 
-const buttonVariants = {
+export const buttonVariants = {
   variants: {
     variant: {
       default: styles.default,
@@ -25,12 +26,6 @@ const buttonVariants = {
   },
 };
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: keyof typeof buttonVariants.variants.variant;
-  size?: keyof typeof buttonVariants.variants.size;
-}
-
 const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     const Comp = 'button';
@@ -51,6 +46,7 @@ const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   },
 );
+
 ButtonComponent.displayName = 'Button';
 
 const Button = React.memo(ButtonComponent);

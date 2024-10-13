@@ -2,10 +2,11 @@
 
 body {
   background-color: var(--background);
-  color: var(--muted-foreground);
+  color: var(--foreground);
   font-size: 14;
   -webkit-font-smoothing: antialiased;
   line-height: 1;
+  height: 100vh;
   overflow-x: hidden;
 }
 

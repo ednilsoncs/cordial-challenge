@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.module.scss';
 
 interface ITableHeadProps {
-  children: string;
+  children: React.ReactNode;
 }
 
 const TableHeader: React.FC<ITableHeadProps> = ({ children }) => {

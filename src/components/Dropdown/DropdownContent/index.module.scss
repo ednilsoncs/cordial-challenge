@@ -1,0 +1,128 @@
+.content {
+  position: absolute;
+  z-index: 50;
+  min-width: 8rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border);
+  background-color: var(--popover);
+  padding: 0.25rem;
+  color: var(--popover-foreground);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: visible;
+}
+
+.open {
+  animation: fadeInZoom 0.2s ease-in-out forwards;
+}
+
+.closed {
+  pointer-events: none;
+  animation: fadeOutZoom 0.2s ease-in-out forwards;
+  visibility: hidden;  
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Posicionamento dinâmico */
+.fromTop {
+  bottom: 100%;
+}
+
+.fromBottom {
+  top: 100%;
+}
+
+.fromLeft {
+  right: 100%;
+}
+
+.fromRight {
+  left: 100%;
+}
+
+/* Animações */
+@keyframes fadeInZoom {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOutZoom {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    visibility: hidden;
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Animações de entrada de direções */
+.fromTop {
+  animation: slideInFromBottom 0.2s ease-in-out forwards;
+}
+
+.fromBottom {
+  animation: slideInFromTop 0.2s ease-in-out forwards;
+}
+
+.fromLeft {
+  animation: slideInFromRight 0.2s ease-in-out forwards;
+}
+
+.fromRight {
+  animation: slideInFromLeft 0.2s ease-in-out forwards;
+}
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(-0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(0.5rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,22 @@
+.dropdownItem {
+  position: relative;
+  display: flex;
+  cursor: default;
+  user-select: none;
+  align-items: center;
+  border-radius: 4px;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdownItem:focus {
+  background-color: var(--accent); 
+  color: var(--accent-foreground);
+}
+
+.dropdownItem[disabled] {
+  pointer-events: none;
+  opacity: 0.5;
+}
