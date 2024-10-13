@@ -251,7 +251,7 @@ const Example = () => {
         </div>
         <div className={styles.paginationInformation}>
           <span>
-            Page {table.currentPage} of {table.totalPages}
+            Page {table.currentPage + 1} of {table.totalPages}
           </span>
         </div>
         <div className={styles.buttonGroup}>

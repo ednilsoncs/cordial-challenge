@@ -99,7 +99,16 @@ export const useTable = ({
       return { key, direction: 'asc' };
     });
   };
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [itemsPerPage]);
+
   const totalPages = useMemo(() => {
+    if (filteredData.length === 0) {
+      return 0;
+    }
+
     return Math.ceil(filteredData.length / itemsPerPage);
   }, [filteredData.length, itemsPerPage]);
 
