@@ -2,8 +2,8 @@ import React from 'react';
 import { DropdownTriggerProps } from './index.types';
 
 const DropdownTrigger = React.forwardRef<HTMLDivElement, DropdownTriggerProps>(
-  ({ className = '', ...props }, ref) => (
-    <div role="button" ref={ref} className={`${className}`} {...props} />
+  ({ className = '', triggerRef, ...props }, ref) => (
+    <div role="button" ref={triggerRef} className={`${className}`} {...props} />
   ),
 );
 

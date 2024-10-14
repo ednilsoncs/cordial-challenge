@@ -6,6 +6,9 @@ import DropdownCheckboxItem from './DropdownCheckboxItem';
 
 export interface Props extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
+  isOpen: boolean;
+  side?: 'bottom' | 'left' | 'right' | 'top';
+  onClose?(value: boolean): void;
 }
 
 export type DropdownCompositionProps = {

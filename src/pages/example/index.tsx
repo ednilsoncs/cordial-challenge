@@ -44,7 +44,7 @@ const columns: TableItemRef[] = headers.map(head => {
       const isClose = searchTerm === null || searchTerm === undefined;
       return (
         <div className={styles.headFilters}>
-          <Dropdown>
+          <Dropdown isOpen={!isClose} side="top">
             <Dropdown.Trigger
               onClick={() => {
                 if (isClose) {
@@ -61,7 +61,7 @@ const columns: TableItemRef[] = headers.map(head => {
                 )}
               </Button>
             </Dropdown.Trigger>
-            <Dropdown.Content side="top" state={!isClose ? 'open' : 'closed'}>
+            <Dropdown.Content>
               <Dropdown.Item key={head.key}>
                 <Input
                   value={searchTerm || ''}
@@ -192,15 +192,15 @@ const Example = () => {
           className={styles.search}
           placeholder="Global search"
         />
-        <Dropdown>
+        <Dropdown
+          isOpen={isOpenColumnDropDownState}
+          onClose={() => handleOpenDropDown(false)}>
           <Dropdown.Trigger onClick={() => handleOpenDropDown(true)}>
             <Button variant="outline">
               Columns <Icons.ArrowDown className={styles.icon} />
             </Button>
           </Dropdown.Trigger>
-          <Dropdown.Content
-            onClose={() => handleOpenDropDown(false)}
-            state={isOpenColumnDropDownState ? 'open' : 'closed'}>
+          <Dropdown.Content>
             {headers.map(head => {
               return (
                 <Dropdown.CheckboxItem
