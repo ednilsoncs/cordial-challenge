@@ -1,6 +1,6 @@
 import dayjs from './dayjs';
 
-interface IFilterDataByType {
+interface IRowHasData {
   row: any;
   columnKey: string;
   searchColumn: string;
@@ -11,18 +11,21 @@ interface IFilterDataByType {
   }[];
 }
 
-export const filterDataByType = ({
+export const rowHasData = ({
   row,
   columnKey,
   searchColumn,
   headers,
-}: IFilterDataByType) => {
+}: IRowHasData) => {
   const header = headers.find(head => head.key === columnKey);
+
   const columnValue = row[headers.findIndex(head => head.key === columnKey)];
+
   const searchString = searchColumn.toLowerCase();
   if (header) {
     switch (header.type) {
       case 'string':
+        return columnValue.toLowerCase().includes(searchString);
       case 'number':
         return String(columnValue).toLowerCase().includes(searchString);
       case 'date':

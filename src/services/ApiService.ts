@@ -1,4 +1,4 @@
-import { filterDataByType } from '@/utils/filtersByDate';
+import { rowHasData } from '@/utils/rowHasData';
 
 export interface ApiResponse {
   data: {
@@ -125,7 +125,7 @@ export async function fetchData({
             const { search: searchColumn, visible } = filters[columnKey];
 
             if ((visible === undefined || visible) && searchColumn) {
-              return filterDataByType({
+              return rowHasData({
                 row,
                 columnKey,
                 searchColumn,
@@ -141,7 +141,7 @@ export async function fetchData({
       if (search) {
         filteredData = filteredData.filter(row =>
           filteredHeaders.some(header =>
-            filterDataByType({
+            rowHasData({
               row,
               columnKey: header.key,
               searchColumn: search,
