@@ -1,7 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-import { Table } from '@/components';
+import { Button, Dropdown, Icons, Table } from '@/components';
 import { TableItemRef, useTable } from '@/hooks/useTable';
 import { StoryFn } from '@storybook/react';
+import { useState } from 'react';
 
 const headers = [
   { key: 'id', label: 'ID', type: 'number' },
@@ -10,9 +11,26 @@ const headers = [
 ];
 
 const data = [
-  [1, 'John', 'Doe'],
-  [2, 'Jane', 'Smith'],
-  [3, 'Bob', 'Johnson'],
+  {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+  },
+  {
+    id: 2,
+    firstName: 'Jane',
+    lastName: 'Smith',
+  },
+  {
+    id: 3,
+    firstName: 'Bob',
+    lastName: 'Johnson',
+  },
+  {
+    id: 4,
+    firstName: 'Alice',
+    lastName: 'Brown',
+  },
 ];
 
 const columns: TableItemRef[] = headers.map(head => {
@@ -39,8 +57,8 @@ const Template: StoryFn = () => {
     columns,
     data,
     state: {
-      visibleColumns: ['id', 'firstName', 'lastName'],
-      itemsPerPage: 10,
+      totalItems: 4,
+      itemsPerPage: 4,
     },
   });
 
@@ -48,8 +66,8 @@ const Template: StoryFn = () => {
     <Table>
       <Table.Header>
         <Table.Row>
-          {headers.map(header => (
-            <Table.Head key={header.key}>{header.label}</Table.Head>
+          {table.headerRows.map(header => (
+            <Table.Head key={header.key}>{header.element}</Table.Head>
           ))}
         </Table.Row>
       </Table.Header>
@@ -63,6 +81,70 @@ const Template: StoryFn = () => {
         ))}
       </Table.Body>
     </Table>
+  );
+};
+
+export const TableWithChoseColumnVisibility: StoryFn = () => {
+  const [isOpenColumnDropDownState, setOpenColumnDropDownState] =
+    useState(false);
+  const table = useTable({
+    columns,
+    data,
+    state: {
+      totalItems: 4,
+      itemsPerPage: 4,
+    },
+  });
+  const handleOpenDropDown = (value: boolean) => {
+    setOpenColumnDropDownState(value);
+  };
+  return (
+    <div>
+      <Dropdown
+        isOpen={isOpenColumnDropDownState}
+        onClose={() => handleOpenDropDown(false)}>
+        <Dropdown.Trigger onClick={() => handleOpenDropDown(true)}>
+          <Button variant="outline">
+            Columns <Icons.ArrowDown />
+          </Button>
+        </Dropdown.Trigger>
+        <Dropdown.Content>
+          {headers.map(head => {
+            return (
+              <Dropdown.CheckboxItem
+                key={head.key}
+                checked={table.isColumnVisible(head.key)}
+                onClick={() =>
+                  table.onColumnChangeVisibility(
+                    !table.isColumnVisible(head.key),
+                    head.key,
+                  )
+                }>
+                {head.label}
+              </Dropdown.CheckboxItem>
+            );
+          })}
+        </Dropdown.Content>
+      </Dropdown>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            {table.headerRows.map(header => (
+              <Table.Head key={header.key}>{header.element}</Table.Head>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {table.bodyRows.map((row, index) => (
+            <Table.Row key={index}>
+              {row.map((cell, idx) => (
+                <Table.Cell key={idx}>{cell}</Table.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
   );
 };
 
