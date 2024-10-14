@@ -1,7 +1,8 @@
 import { Button, Input, Table, Icons, Dropdown, Label } from '@/components';
 import dayjs from '@/utils/dayjs';
 import { TableItemRef, useTable } from '@/hooks/useTable';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchData } from '@/services/ApiService';
 import styles from './styles.module.scss';
 
 const headers = [
@@ -88,101 +89,50 @@ const columns: TableItemRef[] = headers.map(head => {
   };
 });
 
-const data = [
-  [
-    1,
-    'John',
-    'Doe',
-    'john@example.com',
-    'Admin',
-    '2023-05-01',
-    'IT',
-    75000,
-    4.2,
-    ['Project A', 'Project B'],
-    ['JavaScript', 'React', 'Node.js'],
-    '1985-03-15',
-    true,
-  ],
-  [
-    2,
-    'Jane',
-    'Smith',
-    'jane@example.com',
-    'User',
-    '2023-05-10',
-    'Marketing',
-    65000,
-    3.8,
-    ['Project C'],
-    ['SEO', 'Content Writing', 'Social Media'],
-    '1990-07-22',
-    true,
-  ],
-  [
-    3,
-    'Bob',
-    'Johnson',
-    'bob@example.com',
-    'User',
-    '2023-04-28',
-    'Sales',
-    70000,
-    4.5,
-    ['Project D', 'Project E'],
-    ['Negotiation', 'CRM', 'Presentation'],
-    '1988-11-30',
-    false,
-  ],
-  [
-    4,
-    'Alice',
-    'Brown',
-    'alice@example.com',
-    'Manager',
-    '2023-05-05',
-    'HR',
-    80000,
-    4.7,
-    ['Project F'],
-    ['Recruitment', 'Training', 'Conflict Resolution'],
-    '1982-09-18',
-    true,
-  ],
-];
-
 const Example = () => {
   const [isOpenColumnDropDownState, setOpenColumnDropDownState] =
     useState(false);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  const [data, setData] = useState([]);
+
+  const [totalItems, setTotalItems] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const table = useTable({
     columns,
     data,
     state: {
+      totalItems,
       itemsPerPage,
-      visibleColumns,
     },
   });
 
-  const isColumnVisible = (id: string) => {
-    const idIsInList = visibleColumns.find(item => id === item);
-
-    return !!idIsInList;
-  };
-
-  const handleSelectColumns = (id: string) => {
-    const idIsInList = isColumnVisible(id);
-
-    if (idIsInList) {
-      setVisibleColumns(visibleColumns.filter(item => item !== id));
-    } else {
-      setVisibleColumns([id, ...visibleColumns]);
-    }
-  };
   const handleOpenDropDown = (value: boolean) => {
     setOpenColumnDropDownState(value);
   };
+
+  const getDataApi = useCallback(async () => {
+    const apiData = await fetchData({
+      filters: table.columnsFilters,
+      page: table.currentPage,
+      sortOrder: table.sortConfig?.direction,
+      sortBy: table.sortConfig?.key,
+      search: table.globalSearchTerm,
+      pageSize: itemsPerPage,
+    });
+
+    setTotalItems(apiData.totalCount);
+    setData(apiData.data);
+  }, [
+    itemsPerPage,
+    table.columnsFilters,
+    table.currentPage,
+    table.globalSearchTerm,
+    table.sortConfig?.direction,
+    table.sortConfig?.key,
+  ]);
+
+  useEffect(() => {
+    getDataApi();
+  }, [getDataApi]);
 
   return (
     <div className={styles.container}>
@@ -205,8 +155,13 @@ const Example = () => {
               return (
                 <Dropdown.CheckboxItem
                   key={head.key}
-                  checked={isColumnVisible(head.key)}
-                  onClick={() => handleSelectColumns(head.key)}>
+                  checked={table.isColumnVisible(head.key)}
+                  onClick={() =>
+                    table.onColumnChangeVisibility(
+                      !table.isColumnVisible(head.key),
+                      head.key,
+                    )
+                  }>
                   {head.label}
                 </Dropdown.CheckboxItem>
               );
@@ -251,7 +206,7 @@ const Example = () => {
         </div>
         <div className={styles.paginationInformation}>
           <span>
-            Page {table.currentPage + 1} of {table.totalPages}
+            Page {table.currentPage} of {table.totalPages}
           </span>
         </div>
         <div className={styles.buttonGroup}>

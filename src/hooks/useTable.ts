@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-type ISortDirection = 'asc' | 'desc' | null;
+type ISortDirection = 'asc' | 'desc' | undefined;
 
 export interface TableItemRef {
   key: string;
@@ -17,10 +17,10 @@ export interface TableItemRef {
 type Data = string | number | boolean | string[];
 interface IUseTable {
   columns: TableItemRef[];
-  data: Data[][];
+  data: { [key: string]: Data }[];
   state: {
-    visibleColumns: string[];
     itemsPerPage: number;
+    totalItems: number;
   };
 }
 
@@ -32,85 +32,66 @@ interface ICell {
 export const useTable = ({
   data,
   columns,
-  state: { visibleColumns, itemsPerPage },
+  state: { totalItems, itemsPerPage },
 }: IUseTable) => {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: ISortDirection;
   } | null>(null);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
   const [headerRows, setHeaderRows] = useState<ICell[]>([]);
   const [bodyRows, setBodyRows] = useState<JSX.Element[][]>([]);
-  const [columnSearchTerms, setColumnSearchTerms] = useState<{
-    [key: string]: string | null;
+  const [columnsFilters, setColumnsFilters] = useState<{
+    [key: string]: {
+      search: string;
+      visible: boolean;
+    };
   }>({});
+
   const [globalSearchTerm, setGlobalSearchTerm] = useState<string>('');
 
-  const onColumnSearchConfigure = (term: string, key: string) => {
-    setColumnSearchTerms(prev => ({ ...prev, [key]: term }));
+  const isColumnVisible = useCallback(
+    (id: string) => {
+      const idIsInList = columnsFilters[id]?.visible;
+
+      if (idIsInList === undefined) {
+        return true;
+      }
+      return !!idIsInList;
+    },
+    [columnsFilters],
+  );
+  const onColumnSearchConfigure = useCallback(
+    (term: string, key: string) => {
+      setColumnsFilters(prev => ({
+        ...prev,
+        [key]: {
+          ...columnsFilters[key],
+          search: term,
+        },
+      }));
+    },
+    [columnsFilters],
+  );
+  const onColumnChangeVisibility = (visible: boolean, key: string) => {
+    setColumnsFilters(prev => ({
+      ...prev,
+      [key]: {
+        ...columnsFilters[key],
+        visible,
+      },
+    }));
   };
 
   const onGlobalSearch = useCallback((value: string) => {
     setGlobalSearchTerm(value);
   }, []);
 
-  const formattedData = useMemo(() => {
-    return data.map(row => {
-      const record: { [key: string]: Data } = {};
-      columns.forEach((column, index) => {
-        record[column.key] = row[index];
-      });
-      return record;
-    });
-  }, [columns, data]);
-
-  const filteredColumns = useMemo(() => {
-    return columns.filter(column => visibleColumns.includes(column.key));
-  }, [columns, visibleColumns]);
-
-  const filteredData = useMemo(() => {
-    return formattedData.filter(row => {
-      const matchesGlobalSearch = filteredColumns.some(column => {
-        const value = row[column.key]?.toString().toLowerCase() || '';
-        return value.includes(globalSearchTerm.toLowerCase());
-      });
-
-      const matchesColumnSearch = filteredColumns.every(column => {
-        const searchTerm = columnSearchTerms[column.key]?.toLowerCase() || '';
-        const value = row[column.key]?.toString().toLowerCase() || '';
-        return value.includes(searchTerm);
-      });
-
-      return matchesGlobalSearch && matchesColumnSearch;
-    });
-  }, [columnSearchTerms, filteredColumns, formattedData, globalSearchTerm]);
-
-  const handleSortColumn = (key: string) => {
-    setSortConfig(prevConfig => {
-      if (prevConfig && prevConfig.key === key) {
-        if (prevConfig.direction === 'asc') {
-          return { key, direction: 'desc' };
-        }
-        if (prevConfig.direction === 'desc') {
-          return null;
-        }
-        return { key, direction: 'asc' };
-      }
-      return { key, direction: 'asc' };
-    });
-  };
-
   useEffect(() => {
-    setCurrentPage(0);
+    setCurrentPage(1);
   }, [itemsPerPage]);
-
-  const totalPages = useMemo(() => {
-    if (filteredData.length === 0) {
-      return 0;
-    }
-
-    return Math.ceil(filteredData.length / itemsPerPage);
-  }, [filteredData.length, itemsPerPage]);
 
   const previousPage = () => {
     setCurrentPage(prev => Math.max(prev - 1, 0));
@@ -120,51 +101,49 @@ export const useTable = ({
     setCurrentPage(prev => Math.min(prev + 1, totalPages - 1));
   };
 
-  const getCanPreviousPage = () => currentPage > 0;
+  const handleSortColumn = (key: string) => {
+    setSortConfig(prevConfig => {
+      if (prevConfig && prevConfig.key === key) {
+        if (prevConfig.direction === 'asc') {
+          return { key, direction: 'desc' };
+        }
+        return null;
+      }
+      return { key, direction: 'asc' };
+    });
+  };
 
+  const getCanPreviousPage = () => currentPage > 0;
   const getCanNextPage = () => currentPage < totalPages - 1;
 
   useEffect(() => {
-    const sortedData = [...filteredData];
-    if (sortConfig) {
-      sortedData.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
-
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-
-    const headers = filteredColumns.map(column => ({
+    const headersFilters = columns.filter(item => isColumnVisible(item.key));
+    const headers = headersFilters.map(column => ({
       key: column.key,
       element: column.header({
-        sortState: sortConfig?.key === column.key ? sortConfig.direction : null,
-        searchTerm: columnSearchTerms[column.key],
+        sortState:
+          sortConfig?.key === column.key ? sortConfig.direction : undefined,
+        searchTerm: columnsFilters[column.key]?.search,
         onSort: () => handleSortColumn(column.key),
         onSearch: (term: string) => onColumnSearchConfigure(term, column.key),
       }),
     }));
 
     setHeaderRows(headers);
-    const paginatedData = sortedData.slice(
-      currentPage * itemsPerPage,
-      (currentPage + 1) * itemsPerPage,
-    );
 
-    const rows = paginatedData.map(row =>
-      filteredColumns.map(column => column.cell(row[column.key])),
+    const rows = data.map(row =>
+      headersFilters.map(column => column.cell(row[column.key])),
     );
 
     setBodyRows(rows);
   }, [
-    columnSearchTerms,
-    currentPage,
-    filteredColumns,
-    filteredData,
-    itemsPerPage,
-    sortConfig,
+    columns,
+    columnsFilters,
+    data,
+    isColumnVisible,
+    onColumnSearchConfigure,
+    sortConfig?.direction,
+    sortConfig?.key,
   ]);
 
   return {
@@ -177,5 +156,10 @@ export const useTable = ({
     getCanNextPage,
     currentPage,
     totalPages,
+    sortConfig,
+    globalSearchTerm,
+    onColumnChangeVisibility,
+    isColumnVisible,
+    columnsFilters,
   };
 };

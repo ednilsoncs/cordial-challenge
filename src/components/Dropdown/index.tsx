@@ -62,8 +62,6 @@ const Dropdown: DropdownProps & DropdownCompositionProps = ({
           return React.cloneElement<any>(child, {
             ref: triggerRef,
             dropdownPosition,
-            isOpen,
-            onClose,
           });
         }
 
