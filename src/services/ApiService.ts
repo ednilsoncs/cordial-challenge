@@ -1,5 +1,9 @@
+import { filterDataByType } from '@/utils/filtersByDate';
+
 export interface ApiResponse {
-  data: any[];
+  data: {
+    [key: string]: Data;
+  }[];
   totalCount: number;
   page: number;
   pageSize: number;
@@ -13,6 +17,7 @@ export interface ApiRequest {
   search?: string;
   filters?: Record<string, any>;
 }
+
 const headers = [
   { key: 'id', label: 'ID', type: 'number' },
   { key: 'firstName', label: 'First Name', type: 'string' },
@@ -92,7 +97,7 @@ const data = [
   ],
 ];
 
-type Data = string | number | boolean | string[];
+export type Data = string | number | boolean | string[];
 
 export async function fetchData({
   page,
@@ -110,7 +115,6 @@ export async function fetchData({
       if (filters) {
         filteredHeaders = headers.filter(header => {
           const columnFilter = filters[header.key];
-
           return columnFilter?.visible !== false;
         });
       }
@@ -121,11 +125,12 @@ export async function fetchData({
             const { search: searchColumn, visible } = filters[columnKey];
 
             if ((visible === undefined || visible) && searchColumn) {
-              const columnValue =
-                row[headers.findIndex(header => header.key === columnKey)];
-              return String(columnValue)
-                .toLowerCase()
-                .includes(searchColumn.toLowerCase());
+              return filterDataByType({
+                row,
+                columnKey,
+                searchColumn,
+                headers,
+              });
             }
 
             return true;
@@ -135,10 +140,14 @@ export async function fetchData({
 
       if (search) {
         filteredData = filteredData.filter(row =>
-          filteredHeaders.some(header => {
-            const value = row[headers.findIndex(h => h.key === header.key)];
-            return String(value).toLowerCase().includes(search.toLowerCase());
-          }),
+          filteredHeaders.some(header =>
+            filterDataByType({
+              row,
+              columnKey: header.key,
+              searchColumn: search,
+              headers,
+            }),
+          ),
         );
       }
 
@@ -146,9 +155,23 @@ export async function fetchData({
         filteredData.sort((a, b) => {
           const aValue = a[headers.findIndex(header => header.key === sortBy)];
           const bValue = b[headers.findIndex(header => header.key === sortBy)];
-          if (sortOrder === 'asc')
-            return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+
+          if (sortOrder === 'asc') {
+            if (aValue < bValue) {
+              return -1;
+            }
+            if (aValue > bValue) {
+              return 1;
+            }
+            return 0;
+          }
+          if (aValue > bValue) {
+            return -1;
+          }
+          if (aValue < bValue) {
+            return 1;
+          }
+          return 0;
         });
       }
 

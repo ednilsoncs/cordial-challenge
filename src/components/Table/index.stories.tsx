@@ -84,7 +84,7 @@ const Template: StoryFn = () => {
   );
 };
 
-export const TableWithChoseColumnVisibility: StoryFn = () => {
+export const TableWithColumnVisibilityOptions: StoryFn = () => {
   const [isOpenColumnDropDownState, setOpenColumnDropDownState] =
     useState(false);
   const table = useTable({

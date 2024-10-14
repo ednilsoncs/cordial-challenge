@@ -2,7 +2,7 @@ import { Button, Input, Table, Icons, Dropdown, Label } from '@/components';
 import dayjs from '@/utils/dayjs';
 import { TableItemRef, useTable } from '@/hooks/useTable';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchData } from '@/services/ApiService';
+import { Data, fetchData } from '@/services/ApiService';
 import styles from './styles.module.scss';
 
 const headers = [
@@ -92,7 +92,7 @@ const columns: TableItemRef[] = headers.map(head => {
 const Example = () => {
   const [isOpenColumnDropDownState, setOpenColumnDropDownState] =
     useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<{ [key: string]: Data }[]>([]);
 
   const [totalItems, setTotalItems] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
