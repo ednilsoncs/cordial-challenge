@@ -94,8 +94,6 @@ const data = [
 
 type Data = string | number | boolean | string[];
 
-type Data = string | number | boolean | string[];
-
 export async function fetchData({
   page,
   pageSize,
@@ -103,77 +101,80 @@ export async function fetchData({
   sortOrder,
   search,
   filters,
-}: ApiRequest): Promise<ApiResponse & { visibleHeaders: typeof headers }> {
+}: ApiRequest): Promise<ApiResponse> {
   return new Promise((resolve, reject) => {
-    let filteredData = [...data];
-    let filteredHeaders = [...headers];
+    try {
+      let filteredData = [...data];
+      let filteredHeaders = [...headers];
 
-    if (filters) {
-      filteredHeaders = headers.filter(header => {
-        const columnFilter = filters[header.key];
+      if (filters) {
+        filteredHeaders = headers.filter(header => {
+          const columnFilter = filters[header.key];
 
-        return columnFilter?.visible !== false;
-      });
-    }
-
-    if (filters) {
-      filteredData = filteredData.filter(row => {
-        return Object.keys(filters).every(columnKey => {
-          const { search: searchColumn, visible } = filters[columnKey];
-
-          if ((visible === undefined || visible) && searchColumn) {
-            const columnValue =
-              row[headers.findIndex(header => header.key === columnKey)];
-            return String(columnValue)
-              .toLowerCase()
-              .includes(searchColumn.toLowerCase());
-          }
-
-          return true;
+          return columnFilter?.visible !== false;
         });
+      }
+
+      if (filters) {
+        filteredData = filteredData.filter(row => {
+          return Object.keys(filters).every(columnKey => {
+            const { search: searchColumn, visible } = filters[columnKey];
+
+            if ((visible === undefined || visible) && searchColumn) {
+              const columnValue =
+                row[headers.findIndex(header => header.key === columnKey)];
+              return String(columnValue)
+                .toLowerCase()
+                .includes(searchColumn.toLowerCase());
+            }
+
+            return true;
+          });
+        });
+      }
+
+      if (search) {
+        filteredData = filteredData.filter(row =>
+          filteredHeaders.some(header => {
+            const value = row[headers.findIndex(h => h.key === header.key)];
+            return String(value).toLowerCase().includes(search.toLowerCase());
+          }),
+        );
+      }
+
+      if (sortBy && sortOrder) {
+        filteredData.sort((a, b) => {
+          const aValue = a[headers.findIndex(header => header.key === sortBy)];
+          const bValue = b[headers.findIndex(header => header.key === sortBy)];
+          if (sortOrder === 'asc')
+            return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+        });
+      }
+
+      const totalCount = filteredData.length;
+
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize;
+      const paginatedData = filteredData.slice(start, end);
+
+      const formattedData = paginatedData.map(row => {
+        const record: { [key: string]: Data } = {};
+        filteredHeaders.forEach((column, index) => {
+          record[column.key] =
+            row[headers.findIndex(header => header.key === column.key)];
+        });
+        return record;
       });
-    }
 
-    if (search) {
-      filteredData = filteredData.filter(row =>
-        filteredHeaders.some(header => {
-          const value = row[headers.findIndex(h => h.key === header.key)];
-          return String(value).toLowerCase().includes(search.toLowerCase());
-        }),
-      );
-    }
-
-    if (sortBy && sortOrder) {
-      filteredData.sort((a, b) => {
-        const aValue = a[headers.findIndex(header => header.key === sortBy)];
-        const bValue = b[headers.findIndex(header => header.key === sortBy)];
-        if (sortOrder === 'asc')
-          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      resolve({
+        data: formattedData,
+        totalCount,
+        page,
+        pageSize,
       });
+    } catch (err) {
+      reject(err);
     }
-
-    const totalCount = filteredData.length;
-
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const paginatedData = filteredData.slice(start, end);
-
-    const formattedData = paginatedData.map(row => {
-      const record: { [key: string]: Data } = {};
-      filteredHeaders.forEach((column, index) => {
-        record[column.key] =
-          row[headers.findIndex(header => header.key === column.key)];
-      });
-      return record;
-    });
-
-    resolve({
-      data: formattedData,
-      totalCount,
-      page,
-      pageSize,
-      visibleHeaders: filteredHeaders,
-    });
   });
 }

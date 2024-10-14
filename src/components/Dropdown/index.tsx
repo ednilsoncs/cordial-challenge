@@ -61,7 +61,6 @@ const Dropdown: DropdownProps & DropdownCompositionProps = ({
         if (React.isValidElement(child) && child.type === Dropdown.Trigger) {
           return React.cloneElement<any>(child, {
             ref: triggerRef,
-            dropdownPosition,
           });
         }
 
