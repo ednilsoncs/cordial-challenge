@@ -1,9 +1,8 @@
 @import url(../../styles/global.scss);
 
 .label {
-  font-size: 0.875rem;
-  line-height: 1.25rem; 
+  font-size: var(--font-size-sm);
   font-weight: 500; 
-  line-height:  0.875rem; 
+  line-height:  var(--font-size-sm); 
   font-family: var(--font-family);
 }

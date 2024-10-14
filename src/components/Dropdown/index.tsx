@@ -14,21 +14,27 @@ const Dropdown: DropdownProps & DropdownCompositionProps = ({
   onClose,
 }) => {
   const triggerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{
     top: number;
     left: number;
-  } | null>(null);
+  } | null>({
+    left: 0,
+    top: 0,
+  });
 
   useEffect(() => {
     if (isOpen && triggerRef.current) {
       const { top, bottom, left, width } =
         triggerRef.current.getBoundingClientRect();
-      console.log(side);
+      const contentHeight =
+        contentRef.current?.getBoundingClientRect().height || 0;
+
       switch (side) {
         case 'top':
           setDropdownPosition({
-            top: top - triggerRef.current.offsetHeight,
-            left: triggerRef.current.offsetWidth,
+            top: top - contentHeight,
+            left,
           });
           break;
         case 'bottom':
@@ -47,14 +53,14 @@ const Dropdown: DropdownProps & DropdownCompositionProps = ({
           setDropdownPosition({ top: bottom, left });
       }
     }
-  }, [isOpen, side]);
+  }, [isOpen, side, contentRef]);
 
   return (
     <div className={styles.dropdown} ref={triggerRef}>
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && child.type === Dropdown.Trigger) {
-          return React.cloneElement(child, {
-            triggerRef,
+          return React.cloneElement<any>(child, {
+            ref: triggerRef,
             dropdownPosition,
             isOpen,
             onClose,
@@ -62,7 +68,8 @@ const Dropdown: DropdownProps & DropdownCompositionProps = ({
         }
 
         if (React.isValidElement(child) && child.type === Dropdown.Content) {
-          return React.cloneElement(child, {
+          return React.cloneElement<any>(child, {
+            ref: contentRef,
             dropdownPosition,
             isOpen,
             onClose,

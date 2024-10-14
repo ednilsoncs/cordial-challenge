@@ -31,8 +31,6 @@
 }
 
 
-
-
 [role=button], button {
   cursor: pointer;
 }
@@ -45,7 +43,7 @@
 }
 
 
-.ghost{
+.ghost {
   color: var(--foreground);
   background-color: transparent;
   border: none
@@ -82,3 +80,12 @@
   width: 2.5rem;
   height: 2.5rem;
 }
+
+.destructive {
+  background-color: var(--destructive); 
+  color: var(--background);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: none;
+}
+
+

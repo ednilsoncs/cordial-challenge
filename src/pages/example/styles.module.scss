@@ -42,7 +42,7 @@
 
 .status {
   flex: 1;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--muted-foreground);
 }
 
@@ -68,6 +68,6 @@
 
 .paginationInformation {
   color: var(--muted-foreground);
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   line-height: 1.25rem;
 }

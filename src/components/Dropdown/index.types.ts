@@ -5,7 +5,7 @@ import DropdownTrigger from './DropdownTrigger';
 import DropdownCheckboxItem from './DropdownCheckboxItem';
 
 export interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
+  children: React.ReactNode;
   isOpen: boolean;
   side?: 'bottom' | 'left' | 'right' | 'top';
   onClose?(value: boolean): void;

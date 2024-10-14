@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { Checkbox } from '@/components/Checkbox';
+import Checkbox from '@/components/Checkbox';
 import { DropdownCheckboxItemProps } from './index.types';
 import styles from './index.module.scss';
 

@@ -14,4 +14,4 @@ CheckboxComponent.displayName = 'Checkbox';
 
 const Checkbox = React.memo(CheckboxComponent);
 
-export { Checkbox };
+export default Checkbox;

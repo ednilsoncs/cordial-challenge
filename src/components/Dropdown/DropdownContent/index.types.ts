@@ -1,9 +1,9 @@
 export interface DropdownMenuContentProps
   extends React.HTMLAttributes<HTMLDivElement> {
   onClose?(value: boolean): void;
-  dropdownPosition: {
+  dropdownPosition?: {
     top: number;
     left: number;
   };
-  isOpen: boolean;
+  isOpen?: boolean;
 }

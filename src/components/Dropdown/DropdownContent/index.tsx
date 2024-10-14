@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import ReactDOM from 'react-dom';
 import styles from './index.module.scss';
 import { DropdownMenuContentProps } from './index.types';
@@ -6,8 +11,10 @@ import { DropdownMenuContentProps } from './index.types';
 const DropdownMenuContent = React.forwardRef<
   HTMLDivElement,
   DropdownMenuContentProps
->(({ onClose, children, dropdownPosition, isOpen, ...props }) => {
+>(({ onClose, children, dropdownPosition, isOpen, ...props }, ref) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => dropdownRef.current as HTMLDivElement);
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -30,11 +37,11 @@ const DropdownMenuContent = React.forwardRef<
     };
   }, [handleClickOutside]);
 
-  return dropdownPosition && isOpen
+  return isOpen && dropdownPosition
     ? ReactDOM.createPortal(
         <div
           ref={dropdownRef}
-          className={styles.content}
+          className={`${styles.content} ${isOpen ? styles.open : styles.close}`}
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${dropdownPosition.left}px`,
