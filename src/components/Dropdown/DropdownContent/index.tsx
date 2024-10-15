@@ -40,6 +40,7 @@ const DropdownMenuContent = React.forwardRef<
   return isOpen && dropdownPosition
     ? ReactDOM.createPortal(
         <div
+          role="menu"
           ref={dropdownRef}
           className={`${styles.content} ${isOpen ? styles.open : styles.close}`}
           style={{
