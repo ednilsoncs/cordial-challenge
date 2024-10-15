@@ -171,4 +171,34 @@ describe('useTable', () => {
     });
     expect(result.current.columnsFilters.name.search).toBe('John');
   });
+  it('should change column visibility', () => {
+    const { result } = renderHook(() =>
+      useTable({
+        data: mockData,
+        columns: mockColumns,
+        state: { totalItems: 3, itemsPerPage: 2 },
+      }),
+    );
+
+    act(() => {
+      result.current.onColumnChangeVisibility(false, 'name');
+    });
+
+    expect(result.current.isColumnVisible('name')).toBe(false);
+  });
+  it('should handle global search', () => {
+    const { result } = renderHook(() =>
+      useTable({
+        data: mockData,
+        columns: mockColumns,
+        state: { totalItems: 3, itemsPerPage: 2 },
+      }),
+    );
+
+    act(() => {
+      result.current.onGlobalSearch('Doe');
+    });
+
+    expect(result.current.globalSearchTerm).toBe('Doe');
+  });
 });
