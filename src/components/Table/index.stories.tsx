@@ -60,7 +60,7 @@ export default {
   },
 };
 
-const Template: StoryFn = () => {
+export const TableDefault: StoryFn = () => {
   const table = useTable({
     columns,
     data,
@@ -91,7 +91,7 @@ const Template: StoryFn = () => {
     </Table>
   );
 };
-export const Default = Template.bind({});
+
 export const TableWithColumnVisibilityOptions: StoryFn = () => {
   const [isOpenColumnDropDownState, setOpenColumnDropDownState] =
     useState(false);
@@ -345,5 +345,3 @@ export const TableColumnSearchOptions: StoryFn = () => {
     </div>
   );
 };
-
-Default.args = {};
