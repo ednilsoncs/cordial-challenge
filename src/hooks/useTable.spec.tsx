@@ -6,7 +6,7 @@ import {
   fireEvent,
 } from '@testing-library/react';
 
-import { Button, Icons } from '@/components';
+import { Button, Icons, Input } from '@/components';
 import { TableItemRef, useTable } from './useTable';
 
 const mockData = [
@@ -19,7 +19,7 @@ const mockColumns: TableItemRef[] = [
   {
     key: 'name',
     type: 'string',
-    header: ({ sortState, onSort }) => (
+    header: ({ sortState, onSort, searchTerm, onSearch }) => (
       <div>
         First Name
         <Button
@@ -30,6 +30,11 @@ const mockColumns: TableItemRef[] = [
           {sortState === 'desc' && <Icons.ArrowDown />}
           {sortState === undefined && <Icons.ArrowUpDown />}
         </Button>
+        <Input
+          data-testid="input-search-1"
+          value={searchTerm || ''}
+          onChange={e => onSearch(e.target.value)}
+        />
       </div>
     ),
     cell: value => <span>{value}</span>,
@@ -37,7 +42,7 @@ const mockColumns: TableItemRef[] = [
   {
     key: 'age',
     type: 'number',
-    header: ({ sortState, onSort }) => (
+    header: ({ sortState, onSort, searchTerm, onSearch }) => (
       <div>
         Age
         <Button variant="ghost" onClick={() => onSort()}>
@@ -45,6 +50,10 @@ const mockColumns: TableItemRef[] = [
           {sortState === 'desc' && <Icons.ArrowDown />}
           {sortState === undefined && <Icons.ArrowUpDown />}
         </Button>
+        <Input
+          value={searchTerm || ''}
+          onChange={e => onSearch(e.target.value)}
+        />
       </div>
     ),
     cell: value => <span>{value}</span>,
@@ -142,5 +151,24 @@ describe('useTable', () => {
       key: 'name',
       direction: 'desc',
     });
+  });
+
+  it('should allow searching a column', () => {
+    const { result } = renderHook(() =>
+      useTable({
+        data: mockData,
+        columns: mockColumns,
+        state: { totalItems: 3, itemsPerPage: 2 },
+      }),
+    );
+
+    render(result.current.headerRows[0].element);
+    const inputColumnSearch = screen.getByTestId('input-search-1');
+    fireEvent.change(inputColumnSearch, {
+      target: {
+        value: 'John',
+      },
+    });
+    expect(result.current.columnsFilters.name.search).toBe('John');
   });
 });
