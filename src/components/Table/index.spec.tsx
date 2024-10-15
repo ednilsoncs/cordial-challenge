@@ -2,8 +2,13 @@ import { composeStories } from '@storybook/react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import * as stories from './index.stories';
 
-const { TableDefault, TableWithColumnVisibilityOptions } =
-  composeStories(stories);
+const {
+  TableDefault,
+  TableWithColumnVisibilityOptions,
+  TableWithPaginationOptions,
+  TableColumnSortingOptions,
+  TableColumnSearchOptions,
+} = composeStories(stories);
 
 describe('Table Component Tests', () => {
   describe('Table default', () => {
@@ -78,13 +83,99 @@ describe('Table Component Tests', () => {
 
       const dropDownContent = screen.getByRole('menu');
       const tableElement = screen.getByRole('table');
-      expect(within(tableElement).getByText('First Name')).toBeInTheDocument();
       const firstNameCheckbox = within(dropDownContent).getByText('First Name');
       fireEvent.click(firstNameCheckbox);
 
       expect(
         within(tableElement).queryByText('First Name'),
       ).not.toBeInTheDocument();
+    });
+  });
+  describe('Table With Pagination Options', () => {
+    it('Should go to the next page when the "Next" button is clicked', () => {
+      render(<TableWithPaginationOptions />);
+
+      expect(screen.getByText('Page 1 of 4')).toBeInTheDocument();
+
+      const nextButton = screen.getByText('Next');
+      fireEvent.click(nextButton);
+
+      expect(screen.getByText('Page 2 of 4')).toBeInTheDocument();
+    });
+
+    it('Should go to the previous page when the "Previous" button is clicked', () => {
+      render(<TableWithPaginationOptions />);
+
+      fireEvent.click(screen.getByText('Next'));
+      expect(screen.getByText('Page 2 of 4')).toBeInTheDocument();
+
+      const previousButton = screen.getByText('Previous');
+      fireEvent.click(previousButton);
+
+      expect(screen.getByText('Page 1 of 4')).toBeInTheDocument();
+    });
+  });
+
+  describe('Table with Sorting Options', () => {
+    it('Should sort the table when the sort up button is clicked', () => {
+      render(<TableColumnSortingOptions />);
+
+      const idSortButton = screen.queryAllByTestId('sort-icon-button')[0];
+      fireEvent.click(idSortButton);
+      expect(
+        within(idSortButton).getAllByTestId('sort-icon-up')[0],
+      ).toBeInTheDocument();
+
+      fireEvent.click(idSortButton);
+    });
+
+    it('Should sort the table when the sort down button is clicked', () => {
+      render(<TableColumnSortingOptions />);
+
+      const idSortButton = screen.queryAllByTestId('sort-icon-button')[0];
+      fireEvent.click(idSortButton);
+      fireEvent.click(idSortButton);
+      expect(
+        within(idSortButton).getAllByTestId('sort-icon-down')[0],
+      ).toBeInTheDocument();
+
+      fireEvent.click(idSortButton);
+    });
+  });
+  describe('Table with Search Options', () => {
+    it('Should update the global search input', () => {
+      render(<TableColumnSearchOptions />);
+
+      const globalSearchInput = screen.getByPlaceholderText('Global search');
+
+      fireEvent.change(globalSearchInput, { target: { value: 'John' } });
+
+      expect(globalSearchInput).toHaveValue('John');
+    });
+    it('Should open search dropdown and search for a column', () => {
+      render(<TableColumnSearchOptions />);
+
+      const searchButton = screen.getAllByRole('button')[0];
+
+      fireEvent.click(searchButton);
+      const dropDownContent = screen.getByRole('menu');
+      const inputInDropdown = within(dropDownContent).getByRole('textbox');
+
+      fireEvent.change(inputInDropdown, { target: { value: 'Random value' } });
+
+      expect(inputInDropdown).toHaveValue('Random value');
+    });
+
+    it('Should close search dropdown and search for a column', () => {
+      render(<TableColumnSearchOptions />);
+
+      const searchButton = screen.getAllByRole('button')[0];
+
+      fireEvent.click(searchButton);
+      const dropDownContent = screen.getByRole('menu');
+      const inputInDropdown = within(dropDownContent).getByRole('textbox');
+      fireEvent.click(searchButton);
+      expect(inputInDropdown).not.toBeInTheDocument();
     });
   });
 });

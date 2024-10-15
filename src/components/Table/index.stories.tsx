@@ -218,10 +218,19 @@ const customHeaderSorting: TableItemRef[] = headers.map(head => {
       return (
         <div>
           {head.label}
-          <Button variant="ghost" onClick={() => onSort()}>
-            {sortState === 'asc' && <Icons.ArrowUp />}
-            {sortState === 'desc' && <Icons.ArrowDown />}
-            {sortState === undefined && <Icons.ArrowUpDown />}
+          <Button
+            variant="ghost"
+            onClick={() => onSort()}
+            data-testid="sort-icon-button">
+            {sortState === 'asc' && (
+              <Icons.ArrowUp data-testid="sort-icon-up" />
+            )}
+            {sortState === 'desc' && (
+              <Icons.ArrowDown data-testid="sort-icon-down" />
+            )}
+            {sortState === undefined && (
+              <Icons.ArrowUpDown data-testid="sort-icon-up-down" />
+            )}
           </Button>
         </div>
       );
