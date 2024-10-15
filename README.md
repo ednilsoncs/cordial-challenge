@@ -2,6 +2,10 @@
 
 This project is built using modern web development technologies, aiming to deliver a well-structured, modular, and maintainable codebase. Below is an outline of the technologies used, the project structure, and key components.
 
+## Scripts 
+- **npm run dev**: Executes the code in a development environment.
+- **npm run storybook**: Runs the Storybook documentation for the project.
+- **npm run test**: Runs all tests to ensure everything is working correctly.
 ---
 
 ## Technologies Used:
@@ -20,7 +24,7 @@ This project is built using modern web development technologies, aiming to deliv
 ## Project Structure:
 
 ### Components
-Components are built from 0 using the "composition" strategy for better reuse and scalability.
+Components are built from zero using the "composition" strategy for better reuse and scalability.
 
 - **Button**: A customizable button component.
 - **Checkbox**: A toggle switch for selecting options.
