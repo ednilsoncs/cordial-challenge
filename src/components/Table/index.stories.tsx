@@ -320,6 +320,10 @@ export const TableColumnSearchOptions: StoryFn = () => {
 
   return (
     <div>
+      <Input
+        onChange={value => table.onGlobalSearch(value.target.value)}
+        placeholder="Global search"
+      />
       <Table>
         <Table.Header>
           <Table.Row>
