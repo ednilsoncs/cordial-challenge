@@ -1,50 +1,58 @@
-# React + TypeScript + Vite
+# Project Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is built using modern web development technologies, aiming to deliver a well-structured, modular, and maintainable codebase. Below is an outline of the technologies used, the project structure, and key components.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technologies Used:
 
-## Expanding the ESLint configuration
+- **TypeScript**: Provides static typing to JavaScript, improving code quality and reducing runtime errors.
+- **Vite**: A fast build tool optimized for speed and modern frameworks.
+- **Sass Modules**: Enables modular, scoped CSS to avoid conflicts and keep styles maintainable.
+- **JavaScript**: Core functionality of the application.
+- **Storybook**: Used for developing UI components in isolation, making it easier to test and document.
+- **React Testing Library**: Enables testing of React components with a focus on user behavior.
+- **ESLint and Prettier**: Ensure code consistency and enforce best practices.
+- **Dayjs**: Used for date manipulation and formatting.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## Project Structure:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Components
+Components are built with a "compose" strategy for better reuse and scalability.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **Button**: A customizable button component.
+- **Checkbox**: A toggle switch for selecting options.
+- **Dropdown**: A customizable dropdown made from 0 using only react and scss
+- **Icons**: A set of reusable SVG-based icons.
+- **Input**: Text and number input fields with various states.
+- **Label**: Labels for form elements with accessible attributes.
+- **Table**:  flexible table component that allows you to customize and build your table exactly the way you need.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Hooks
+Custom hooks for managing logic outside of components.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **useTable**: Handles table-related data, search, sorting, filtering, and pagination logic.
+
+### Pages
+Prebuilt pages for example usage and testing.
+
+- **examplePage**: Demonstrates usage of components and hooks together.
+
+### Services
+
+- **ApiService**: A service that mocks data for testing and development purposes.
+
+### Styles
+
+- **Global Styling**: Contains the global styles and theme setup for the application.
+
+### Utilities
+
+- **rowHasData**: A utility helper function to determine if a specific row contains data.
+- **dayjs**: A wrapper around the dayjs library, used location and add plugin.
+
+---
+
+This project is designed with scalability and testability in mind, allowing for easy maintenance and feature expansion.
