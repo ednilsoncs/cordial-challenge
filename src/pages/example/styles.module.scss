@@ -21,7 +21,7 @@
  display: flex;
 }
 
-.icon{
+.icon {
   height: 1rem;
   width: 1rem;
 }
@@ -30,14 +30,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.pagnation {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 1rem 0;
-  gap: 0.5rem;
 }
 
 .status {
@@ -50,24 +42,26 @@
   display: flex;
   align-items: flex-end;
   gap: 0.5rem; 
+
+
+  .row { 
+    display: flex;
+    gap: 4px;
+    flex-direction: column;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 0.5rem; 
+  }
+  
+  .paginationInformation {
+    color: var(--muted-foreground);
+    font-size: var(--font-size-sm);
+    line-height: 1.25rem;
+  }
 }
 
-.row { 
-  display: flex;
-  gap: 4px;
-  flex-direction: column;
-}
-
-.buttonGroup {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: flex-end;
-  gap: 0.5rem; 
-}
-
-.paginationInformation {
-  color: var(--muted-foreground);
-  font-size: var(--font-size-sm);
-  line-height: 1.25rem;
-}

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { Button, Dropdown, Icons, Table } from '@/components';
+import { Button, Dropdown, Icons, Input, Table } from '@/components';
 import { TableItemRef, useTable } from '@/hooks/useTable';
 import { StoryFn } from '@storybook/react';
 import { useState } from 'react';
@@ -206,6 +206,138 @@ export const TableWithPaginationOptions: StoryFn = () => {
           Next
         </Button>
       </div>
+    </div>
+  );
+};
+
+const customHeaderSorting: TableItemRef[] = headers.map(head => {
+  return {
+    key: head.key,
+    type: head.type,
+    header: ({ sortState, onSort }) => {
+      return (
+        <div>
+          {head.label}
+          <Button variant="ghost" onClick={() => onSort()}>
+            {sortState === 'asc' && <Icons.ArrowUp />}
+            {sortState === 'desc' && <Icons.ArrowDown />}
+            {sortState === undefined && <Icons.ArrowUpDown />}
+          </Button>
+        </div>
+      );
+    },
+
+    cell: value => {
+      return <span>{value}</span>;
+    },
+  };
+});
+
+export const TableColumnSortingOptions: StoryFn = () => {
+  const table = useTable({
+    columns: customHeaderSorting,
+    data,
+    state: {
+      totalItems: 4,
+      itemsPerPage: 1,
+    },
+  });
+
+  return (
+    <div>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            {table.headerRows.map(header => (
+              <Table.Head key={header.key}>{header.element}</Table.Head>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {table.bodyRows.map((row, index) => (
+            <Table.Row key={index}>
+              {row.map((cell, idx) => (
+                <Table.Cell key={idx}>{cell}</Table.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
+  );
+};
+
+const customHeaderSearch: TableItemRef[] = headers.map(head => {
+  return {
+    key: head.key,
+    type: head.type,
+    header: ({ searchTerm, onSearch }) => {
+      const isClose = searchTerm === null || searchTerm === undefined;
+      return (
+        <div>
+          {head.label}
+          <Dropdown isOpen={!isClose} side="top">
+            <Dropdown.Trigger
+              onClick={() => {
+                if (isClose) {
+                  onSearch('');
+                } else {
+                  onSearch(null);
+                }
+              }}>
+              <Button variant="ghost">
+                {isClose ? <Icons.Search /> : <Icons.Close />}
+              </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+              <Dropdown.Item key={head.key}>
+                <Input
+                  value={searchTerm || ''}
+                  onChange={e => onSearch(e.target.value)}
+                />
+              </Dropdown.Item>
+            </Dropdown.Content>
+          </Dropdown>
+        </div>
+      );
+    },
+
+    cell: value => {
+      return <span>{value}</span>;
+    },
+  };
+});
+
+export const TableColumnSearchOptions: StoryFn = () => {
+  const table = useTable({
+    columns: customHeaderSearch,
+    data,
+    state: {
+      totalItems: 4,
+      itemsPerPage: 1,
+    },
+  });
+
+  return (
+    <div>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            {table.headerRows.map(header => (
+              <Table.Head key={header.key}>{header.element}</Table.Head>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {table.bodyRows.map((row, index) => (
+            <Table.Row key={index}>
+              {row.map((cell, idx) => (
+                <Table.Cell key={idx}>{cell}</Table.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
     </div>
   );
 };

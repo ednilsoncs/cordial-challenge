@@ -75,7 +75,7 @@ const columns: TableItemRef[] = headers.map(head => {
           <Button variant="ghost" onClick={() => onSort()}>
             {sortState === 'asc' && <Icons.ArrowUp />}
             {sortState === 'desc' && <Icons.ArrowDown />}
-            {sortState === null && <Icons.ArrowUpDown />}
+            {sortState === undefined && <Icons.ArrowUpDown />}
           </Button>
         </div>
       );

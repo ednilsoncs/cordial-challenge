@@ -113,8 +113,6 @@ export const useTable = ({
     });
   };
 
-  console.log(currentPage, totalPages);
-
   const getCanPreviousPage = () => currentPage > 1;
   const getCanNextPage = () => currentPage < totalPages;
 

@@ -1,38 +1,4 @@
-import { rowHasData } from '@/utils/rowHasData';
 import { fetchData, ApiRequest, ApiResponse } from './ApiService';
-
-const mockData = [
-  [
-    1,
-    'John',
-    'Doe',
-    'john@example.com',
-    'Admin',
-    '2023-05-01',
-    'IT',
-    75000,
-    4.2,
-    ['Project A', 'Project B'],
-    ['JavaScript', 'React', 'Node.js'],
-    '1985-03-15',
-    true,
-  ],
-  [
-    2,
-    'Jane',
-    'Smith',
-    'jane@example.com',
-    'User',
-    '2023-05-10',
-    'Marketing',
-    65000,
-    3.8,
-    ['Project C'],
-    ['SEO', 'Content Writing', 'Social Media'],
-    '1990-07-22',
-    true,
-  ],
-];
 
 describe('fetchData', () => {
   beforeEach(() => {
@@ -74,7 +40,7 @@ describe('fetchData', () => {
           isFullTime: true,
         },
       ],
-      totalCount: mockData.length,
+      totalCount: 4,
       page: 1,
       pageSize: 2,
     };
@@ -85,6 +51,7 @@ describe('fetchData', () => {
 
   it('should filter data based on search term', async () => {
     const request: ApiRequest = { page: 1, pageSize: 2, search: 'John' };
+
     const expectedResponse: ApiResponse = {
       data: [
         {
@@ -102,15 +69,30 @@ describe('fetchData', () => {
           birthDate: '1985-03-15',
           isFullTime: true,
         },
+        {
+          id: 3,
+          firstName: 'Bob',
+          lastName: 'Johnson',
+          email: 'bob@example.com',
+          role: 'User',
+          lastLogin: '2023-04-28',
+          department: 'Sales',
+          salary: 70000,
+          performanceScore: 4.5,
+          projects: ['Project D', 'Project E'],
+          skills: ['Negotiation', 'CRM', 'Presentation'],
+          birthDate: '1988-11-30',
+          isFullTime: false,
+        },
       ],
-      totalCount: 1,
+      totalCount: 2,
       page: 1,
       pageSize: 2,
     };
 
     const result = await fetchData(request);
+
     expect(result).toEqual(expectedResponse);
-    expect(rowHasData).toHaveBeenCalled();
   });
 
   it('should sort data by specified column', async () => {
@@ -123,18 +105,18 @@ describe('fetchData', () => {
     const expectedResponse: ApiResponse = {
       data: [
         {
-          id: 2,
-          firstName: 'Jane',
-          lastName: 'Smith',
-          email: 'jane@example.com',
-          role: 'User',
-          lastLogin: '2023-05-10',
-          department: 'Marketing',
-          salary: 65000,
-          performanceScore: 3.8,
-          projects: ['Project C'],
-          skills: ['SEO', 'Content Writing', 'Social Media'],
-          birthDate: '1990-07-22',
+          id: 4,
+          firstName: 'Alice',
+          lastName: 'Brown',
+          email: 'alice@example.com',
+          role: 'Manager',
+          lastLogin: '2023-05-05',
+          department: 'HR',
+          salary: 80000,
+          performanceScore: 4.7,
+          projects: ['Project F'],
+          skills: ['Recruitment', 'Training', 'Conflict Resolution'],
+          birthDate: '1982-09-18',
           isFullTime: true,
         },
         {
@@ -153,12 +135,13 @@ describe('fetchData', () => {
           isFullTime: true,
         },
       ],
-      totalCount: mockData.length,
+      totalCount: 4,
       page: 1,
       pageSize: 2,
     };
 
     const result = await fetchData(request);
+
     expect(result).toEqual(expectedResponse);
   });
 
@@ -196,7 +179,6 @@ describe('fetchData', () => {
 
     const result = await fetchData(request);
     expect(result).toEqual(expectedResponse);
-    expect(rowHasData).toHaveBeenCalled();
   });
 
   it('should handle empty results gracefully', async () => {

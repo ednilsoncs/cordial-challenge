@@ -183,7 +183,7 @@ export async function fetchData({
 
       const formattedData = paginatedData.map(row => {
         const record: { [key: string]: Data } = {};
-        filteredHeaders.forEach((column, index) => {
+        filteredHeaders.forEach(column => {
           record[column.key] =
             row[headers.findIndex(header => header.key === column.key)];
         });
