@@ -20,7 +20,7 @@ This project is built using modern web development technologies, aiming to deliv
 ## Project Structure:
 
 ### Components
-Components are built with a "compose" strategy for better reuse and scalability.
+Components are built from 0 using the "composition" strategy for better reuse and scalability.
 
 - **Button**: A customizable button component.
 - **Checkbox**: A toggle switch for selecting options.
@@ -39,10 +39,21 @@ Custom hooks for managing logic outside of components.
 Prebuilt pages for example usage and testing.
 
 - **examplePage**: Demonstrates usage of components and hooks together.
+- - done - Display data based on provided header and data arrays
+- - done - Implement sortable columns 
+- - done - Implement flexible search functionality (global, column-specific, or both)
+- - done - Add pagination with configurable page size
+- - done - Add the ability to customize which columns are shown
+- - done - Ensure all features can be individually configurable
+- - done - Use the provided mock API for data fetching
+- - done - Implement Storybook to showcase different implementations and configurations of the table component
 
 ### Services
 
 - **ApiService**: A service that mocks data for testing and development purposes.
+- - done - Implement your own logic for sorting, searching, and pagination.
+- - done - For date handling, you may use a third-party library of your choice (e.g., date-fns, moment.js).
+
 
 ### Styles
 
