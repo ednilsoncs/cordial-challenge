@@ -7,6 +7,14 @@ import Icons from '../Icons';
 
 const meta: Meta = {
   title: 'Components/Dropdown',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'This is a dropdown component that supports rendering inside a table. It was built using a portal, and to work properly, you must use the provided trigger and content.',
+      },
+    },
+  },
   component: Dropdown,
   argTypes: {
     isOpen: {

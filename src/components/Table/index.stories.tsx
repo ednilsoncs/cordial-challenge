@@ -50,6 +50,14 @@ const columns: TableItemRef[] = headers.map(head => {
 export default {
   title: 'Components/Table',
   component: Table,
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'This is a table built using the concept of composed components.',
+      },
+    },
+  },
 };
 
 const Template: StoryFn = () => {
@@ -83,7 +91,7 @@ const Template: StoryFn = () => {
     </Table>
   );
 };
-
+export const Default = Template.bind({});
 export const TableWithColumnVisibilityOptions: StoryFn = () => {
   const [isOpenColumnDropDownState, setOpenColumnDropDownState] =
     useState(false);
@@ -148,5 +156,58 @@ export const TableWithColumnVisibilityOptions: StoryFn = () => {
   );
 };
 
-export const Default = Template.bind({});
+export const TableWithPaginationOptions: StoryFn = () => {
+  const table = useTable({
+    columns,
+    data,
+    state: {
+      totalItems: 4,
+      itemsPerPage: 1,
+    },
+  });
+
+  return (
+    <div>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            {table.headerRows.map(header => (
+              <Table.Head key={header.key}>{header.element}</Table.Head>
+            ))}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {table.bodyRows.map((row, index) => (
+            <Table.Row key={index}>
+              {row.map((cell, idx) => (
+                <Table.Cell key={idx}>{cell}</Table.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
+
+      <div>
+        <span>
+          Page {table.currentPage} of {table.totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}>
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}>
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 Default.args = {};

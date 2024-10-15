@@ -98,7 +98,7 @@ export const useTable = ({
   };
 
   const nextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages - 1));
+    setCurrentPage(prev => Math.min(prev + 1, totalPages));
   };
 
   const handleSortColumn = (key: string) => {
@@ -113,8 +113,10 @@ export const useTable = ({
     });
   };
 
-  const getCanPreviousPage = () => currentPage > 0;
-  const getCanNextPage = () => currentPage < totalPages - 1;
+  console.log(currentPage, totalPages);
+
+  const getCanPreviousPage = () => currentPage > 1;
+  const getCanNextPage = () => currentPage < totalPages;
 
   useEffect(() => {
     const headersFilters = columns.filter(item => isColumnVisible(item.key));
